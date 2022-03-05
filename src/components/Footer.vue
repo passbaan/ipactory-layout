@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     ...mapState({
-      list: ({ areas }) => areas.list,
+      list: ({ areas }) => areas.originalList,
     }),
   },
 };

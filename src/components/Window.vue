@@ -1,7 +1,7 @@
 <template>
   <div class="window">
     <draggable
-      @change="moved"
+      @change="moveArea"
       handle=".area__handle"
       v-model="list"
       tag="transition-group"
@@ -9,12 +9,7 @@
       :component-data="{ name: 'fade' }"
     >
       <template #item="{ element }">
-        <Area
-          :id="element.id"
-          :key="element.id"
-          :element="element"
-          v-show="element.is_active"
-        />
+        <Area :id="element.id" :key="element.id" :element="element" />
       </template>
     </draggable>
   </div>
@@ -35,7 +30,7 @@ export default {
   computed: {
     list: {
       get() {
-        return this.$store.state.areas.list;
+        return this.$store.state.areas.list.filter((x) => x.is_active);
       },
       set(value) {
         this.$store.dispatch(UPDATE_LIST, value);
@@ -46,11 +41,6 @@ export default {
     ...mapActions({
       moveArea: MOVE_AREA,
     }),
-    moved(evt) {
-      const { moved } = evt;
-      const { oldIndex, newIndex } = moved;
-      this.moveArea({ oldIndex, newIndex });
-    },
   },
 };
 </script>

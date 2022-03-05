@@ -9,7 +9,8 @@ const REARRANGE_AREA = "rearrange_area";
 const SET_LIST = "set_list";
 
 const state = () => ({
-  list: [
+  list: [],
+  originalList: [
     {
       name: "Area 1",
       original_position: 1,
@@ -76,20 +77,57 @@ const actions = {
 };
 const mutations = {
   [AREA_TOGGLE](state, { areaId, show }) {
-    const idx = state.list.findIndex((i) => i.id === areaId);
-    state.list[idx].is_active = show;
+    const { originalList, list } = state;
+    let newList = list;
+    if (show === true) {
+      const item = originalList.find((i) => i.id === areaId);
+      item.is_active = true;
+      const { length } = list;
+      if (item.original_position < length) {
+        list.splice(item.original_position - 1, 0, item);
+      } else {
+        let idx = -1;
+        for (let i = 0; i < length; i += 1) {
+          if (
+            list[i].original_position > item.original_position &&
+            i > 0 &&
+            list[i].original_position < list[i - 1].original_position
+          ) {
+            idx = i;
+          }
+        }
+        if (idx !== -1) {
+          list.splice(idx, 0, item);
+        } else {
+          list.push(item);
+        }
+      }
+      newList = list;
+    } else {
+      state.originalList = originalList.map((item) => ({
+        ...item,
+        is_active: item.id === areaId ? false : item.is_active,
+      }));
+      newList = list.filter((x) => x.id !== areaId);
+    }
+
+    state.list = newList.map((item, idx) => ({
+      ...item,
+      current_position: idx + 1,
+    }));
   },
-  [REARRANGE_AREA](state, { oldIndex, newIndex }) {
+  [REARRANGE_AREA](state) {
     const { list } = state;
-    const from = list[oldIndex];
-    const to = list[newIndex];
-    from.current_position = newIndex + 1;
-    to.current_position = oldIndex + 1;
-    state[oldIndex] = to;
-    state[newIndex] = from;
+    state.list = list.map((item, idx) => ({
+      ...item,
+      current_position: idx + 1,
+    }));
   },
   [SET_LIST](state, list) {
-    state.list = list;
+    state.list = list.map((item, idx) => ({
+      ...item,
+      current_position: idx + 1,
+    }));
   },
 };
 
