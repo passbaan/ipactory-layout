@@ -1,0 +1,81 @@
+@import 'variables';
+*{
+  padding:0;
+  margin:0;
+  box-sizing: border-box;
+}
+
+main{
+  height:100vh;
+}
+// Main Window Styles
+.window{
+  height:90%;
+  overflow: auto;
+  display: flex;
+  flex:auto;
+}
+// Icons
+.icon{
+  display: block;
+  padding:5px;
+  font-style: normal;
+}
+
+// Area Setting
+.area{
+  width: 100%;
+  border: 1px solid red;
+  &__handle{
+    width:100%;
+    background:$colorDark1;
+    cursor: pointer;
+  }
+  &__close{
+    background-color: $colorDark3;
+    color: #fff;
+    cursor: pointer;
+  }
+  &__header{
+    display:flex;
+
+  }
+  &__content{
+    padding: 5px;
+  }
+}
+// Foote Styles
+.footer{
+  background-color: $colorLight;
+  overflow: auto;
+  height:10%;
+  display: flex;
+  align-items: center;
+  padding:10px 40px;
+  justify-content: space-between;
+  flex-direction: row;
+
+  &__btn{
+    background: $colorDark3;
+    color:#fff;
+    border:0;
+    padding:10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    &:active{
+      transform:scale(0.99);
+    }
+    &--disabled{
+      background:$colorDark1;
+      color:$colorLight;
+    }
+   
+  }
+  @media screen and (max-width:1024px) {
+    padding:10px 5px;
+    &__btn{
+      padding: 5px 10px;
+      margin:0 2.5px;
+    }
+  }
+}
