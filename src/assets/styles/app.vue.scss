@@ -24,8 +24,8 @@ main{
 
 // Area Setting
 .area{
-  width: 100%;
-  border: 1px solid red;
+  min-width: 100px;
+  position: relative;
   &__handle{
     width:100%;
     background:$colorDark1;
@@ -42,6 +42,15 @@ main{
   }
   &__content{
     padding: 5px;
+  }
+  &__divider{
+    height: 100%;
+    background-color: $colorDark3;
+    position: absolute;
+    right:0;
+    top:0;
+    width: 4px;
+    cursor:ew-resize;
   }
 }
 // Foote Styles

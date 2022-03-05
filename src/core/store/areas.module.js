@@ -17,6 +17,7 @@ const state = () => ({
       current_position: 1,
       id: 1,
       is_active: false,
+      width: 100,
     },
     {
       name: "Area 2",
@@ -24,6 +25,7 @@ const state = () => ({
       current_position: 3,
       id: 2,
       is_active: false,
+      width: 100,
     },
     {
       name: "Area 3",
@@ -31,6 +33,7 @@ const state = () => ({
       current_position: 3,
       id: 3,
       is_active: false,
+      width: 100,
     },
     {
       name: "Area 4",
@@ -38,6 +41,7 @@ const state = () => ({
       current_position: 4,
       id: 4,
       is_active: false,
+      width: 100,
     },
     {
       name: "Area 5",
@@ -45,6 +49,7 @@ const state = () => ({
       current_position: 5,
       id: 5,
       is_active: false,
+      width: 100,
     },
   ],
 });
