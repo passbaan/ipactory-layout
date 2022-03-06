@@ -11,6 +11,7 @@ export const READJUST = "READJUST_AREAS";
 export const FOLD_CARD = "fold_card";
 export const UPDATE_CARDS = "update_cards";
 export const RESIZING_TOGGLE = "resizing_toggle";
+export const READ_JSON = "read_json";
 // Mutation types
 const AREA_TOGGLE = "area_toggle";
 const REARRANGE_AREA = "rearrange_area";
@@ -21,7 +22,7 @@ const READUST_AREAS = "redistribute_areas";
 const SET_CARD_FOLD = "set_card_fold";
 const SET_CARDS = "set_cards";
 const SET_RESIZING = "set_resizing";
-
+const PARSE_JSON = "parse_json";
 const state = () => ({
   resizing: false,
   list: [],
@@ -107,6 +108,9 @@ const state = () => ({
 });
 const getters = {};
 const actions = {
+  [READ_JSON]({ commit }, json) {
+    commit(PARSE_JSON, json);
+  },
   [RESIZING_TOGGLE]({ commit }, status) {
     commit(SET_RESIZING, status);
   },
@@ -171,6 +175,8 @@ const generateJson = (list) => {
       is_active,
       width,
       pixel_width,
+      hasEditor = false,
+      image = null,
       id,
       cards = null,
     } = item;
@@ -181,6 +187,8 @@ const generateJson = (list) => {
       is_active,
       width,
       pixel_width,
+      hasEditor,
+      image,
     };
     if (cards) {
       returnItem.cards = cards.map((c, i) => ({ ...c, position: i + 1 }));
@@ -194,6 +202,18 @@ const generateJson = (list) => {
   return JSON.stringify(data);
 };
 const mutations = {
+  [PARSE_JSON](state, json) {
+    const parsedJSON = JSON.parse(json);
+    const parsed = Object.entries(parsedJSON).map(([, value]) => {
+      return {
+        ...value,
+        uid: v4(),
+      };
+    });
+    state.json = json;
+    state.list = parsed;
+    console.log("file: areas.module.js | line 203 | parsed", parsed);
+  },
   [SET_RESIZING](state, status) {
     state.resizing = status;
   },

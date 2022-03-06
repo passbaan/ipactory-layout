@@ -9,7 +9,7 @@
       item-key="uid"
     >
       <template #item="{ element }">
-        <Transition>
+        <Transition :key="element.uid">
           <Area v-if="element" :key="element.uid" :element="element" />
         </Transition>
       </template>

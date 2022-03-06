@@ -12,14 +12,7 @@
       </button>
     </template>
 
-    <textarea
-      readonly
-      name="config"
-      id="config"
-      cols="30"
-      rows="5"
-      v-model="jsonText"
-    >
+    <textarea name="config" id="config" cols="30" rows="5" v-model="jsonText">
     </textarea>
     <button class="footer__btn" @click="readjust">Adjust Structure</button>
   </footer>
@@ -27,7 +20,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { ACTIVATE_AREA, READJUST } from "@/core/store/areas.module";
+import { ACTIVATE_AREA, READJUST, READ_JSON } from "@/core/store/areas.module";
 export default {
   name: "FooterComponent",
   methods: {
@@ -42,9 +35,17 @@ export default {
     },
   },
   computed: {
+    jsonText: {
+      get() {
+        return this.$store.state.areas.json;
+      },
+      set(value) {
+        console.log("file: Footer.vue | line 43 | set | value", value);
+        this.$store.dispatch(READ_JSON, value);
+      },
+    },
     ...mapState({
       list: ({ areas }) => areas.originalList,
-      jsonText: ({ areas }) => areas.json,
     }),
   },
 };
