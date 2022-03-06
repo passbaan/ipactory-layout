@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <editor
       api-key="no-api-key"
       :init="{

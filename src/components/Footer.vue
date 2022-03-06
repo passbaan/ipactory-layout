@@ -12,7 +12,15 @@
       </button>
     </template>
 
-    <textarea name="config" id="config" cols="30" rows="5"></textarea>
+    <textarea
+      readonly
+      name="config"
+      id="config"
+      cols="30"
+      rows="5"
+      v-model="jsonText"
+    >
+    </textarea>
     <button class="footer__btn" @click="readjust">Adjust Structure</button>
   </footer>
 </template>
@@ -36,6 +44,7 @@ export default {
   computed: {
     ...mapState({
       list: ({ areas }) => areas.originalList,
+      jsonText: ({ areas }) => areas.json,
     }),
   },
 };

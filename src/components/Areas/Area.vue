@@ -27,13 +27,14 @@
       </template>
       <template v-if="element.cards && element.cards.length > 0">
         <draggable
+          @change="cardsMoved"
           v-model="cards"
           tag="transition-group"
           item-key="id"
           handle=".card__draggable"
         >
           <template #item="{ element }">
-            <Card :card="element" :key="element.id" />
+            <Card @fold="cardFold" :card="element" :key="element.id" />
           </template>
         </draggable>
       </template>
@@ -49,7 +50,12 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import draggable from "vuedraggable";
-import { DEACTIVATE_AREA, RESIZING_AREA } from "@/core/store/areas.module";
+import {
+  DEACTIVATE_AREA,
+  RESIZING_AREA,
+  FOLD_CARD,
+  UPDATE_CARDS,
+} from "@/core/store/areas.module";
 import Editor from "@/components/Areas/Editor.vue";
 import Card from "@/components/Areas/Card.vue";
 export default {
@@ -82,6 +88,8 @@ export default {
     ...mapActions({
       deActivateArea: DEACTIVATE_AREA,
       resizeArea: RESIZING_AREA,
+      foldCard: FOLD_CARD,
+      updateCards: UPDATE_CARDS,
     }),
     downMouse(evt) {
       const { target: resizer, pageX: initialPageX } = evt;
@@ -118,6 +126,12 @@ export default {
 
       addEventListener("mousemove", onMouseMove);
       addEventListener("mouseup", onMouseUp);
+    },
+    cardsMoved() {
+      this.updateCards({ areaId: this.element.id, cards: this.cards });
+    },
+    cardFold({ id, status }) {
+      this.foldCard({ areaId: this.element.id, id, status });
     },
   },
 };

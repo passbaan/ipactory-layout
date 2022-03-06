@@ -1,0 +1,33 @@
+{
+  "area1": {
+    "id": 1,
+    "original_position": 1,
+    "current_position": 1,
+    "is_active": true,
+    "width": 100,
+    "pixel_width": 995,
+    "cards": [
+      {
+        "title": "Card A",
+        "content": "Card A",
+        "id": "506c6dd0-469a-42ff-933a-47871346dd26",
+        "fold_status": false,
+        "position": 1
+      },
+      {
+        "title": "Card B",
+        "content": "Card B",
+        "id": "8a8da9aa-1e93-463e-adc0-33e1c958a89a",
+        "fold_status": true,
+        "position": 2
+      },
+      {
+        "title": "Card C",
+        "content": "Card C",
+        "id": "c9dec3a4-172f-478a-a39d-fb09374606fb",
+        "fold_status": true,
+        "position": 3
+      }
+    ]
+  }
+}

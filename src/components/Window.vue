@@ -9,7 +9,9 @@
       item-key="uid"
     >
       <template #item="{ element }">
-        <Area :key="element.uid" :element="element" />
+        <Transition>
+          <Area v-if="element" :key="element.uid" :element="element" />
+        </Transition>
       </template>
     </draggable>
     <!-- </Multipane> -->

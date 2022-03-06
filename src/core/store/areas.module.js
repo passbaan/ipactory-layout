@@ -8,6 +8,8 @@ export const RESIZING_AREA = "resizing_AREA";
 export const UPDATE_LIST = "update_list";
 export const WINDOW_WAS_RESIZED = "window_was_resized";
 export const READJUST = "READJUST_AREAS";
+export const FOLD_CARD = "fold_card";
+export const UPDATE_CARDS = "update_cards;";
 // Mutation types
 const AREA_TOGGLE = "area_toggle";
 const REARRANGE_AREA = "rearrange_area";
@@ -15,6 +17,8 @@ const SET_LIST = "set_list";
 const RESIZE_AREA = "resize_area";
 const RECALIBRATE = "recalibrate_sizes";
 const READUST_AREAS = "redistribute_areas";
+const SET_CARD_FOLD = "set_card_fold";
+const SET_CARDS = "set_cards";
 const state = () => ({
   list: [],
   originalList: [
@@ -95,9 +99,16 @@ const state = () => ({
       image: "https://i.imgur.com/GL7igry.png",
     },
   ],
+  json: "",
 });
 const getters = {};
 const actions = {
+  [UPDATE_CARDS]({ commit }, { areaId, cards }) {
+    commit(SET_CARDS, { areaId, cards });
+  },
+  [FOLD_CARD]({ commit }, { areaId, id, status }) {
+    commit(SET_CARD_FOLD, { areaId, id, status });
+  },
   [ACTIVATE_AREA]({ commit }, areaId = null) {
     let error = null;
     if (typeof areaId === "number") {
@@ -144,6 +155,36 @@ const getPercentages = (list) => {
       ...item,
     };
   });
+};
+const generateJson = (list) => {
+  let data = list.map((item) => {
+    const {
+      original_position,
+      current_position,
+      is_active,
+      width,
+      pixel_width,
+      id,
+      cards = null,
+    } = item;
+    const returnItem = {
+      id,
+      original_position,
+      current_position,
+      is_active,
+      width,
+      pixel_width,
+    };
+    if (cards) {
+      returnItem.cards = cards.map((c, i) => ({ ...c, position: i + 1 }));
+    }
+    return returnItem;
+  });
+  data = data.reduce((acc, it) => {
+    acc[`area${it.id}`] = it;
+    return acc;
+  }, {});
+  return JSON.stringify(data);
 };
 const mutations = {
   [AREA_TOGGLE](state, { areaId, show }) {
@@ -202,34 +243,41 @@ const mutations = {
     }
 
     const totalWidth = window.innerWidth;
-    state.list = newList.map((item, idx) => ({
+    newList = newList.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
       pixel_width: totalWidth / (100 / item.width),
-      uid: v4(),
     }));
+    state.list = newList;
+    state.json = generateJson(state.list);
   },
   [RESIZE_AREA](state, { id, sizeDiff }) {
     const { list } = state;
     const indx = list.findIndex((l) => l.id === id);
-    state.list[indx].pixel_width += sizeDiff;
-    state.list[indx + 1].pixel_width -= sizeDiff;
-    state.list = getPercentages(state.list);
+    list[indx].pixel_width += sizeDiff;
+    list[indx + 1].pixel_width -= sizeDiff;
+    const newList = getPercentages(list);
+    state.list = newList;
+    state.json = generateJson(state.list);
   },
   [REARRANGE_AREA](state) {
     const { list } = state;
     state.list = list.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
-      uid: v4(),
+      // uid: v4(),
     }));
+
+    state.json = generateJson(state.list);
   },
   [SET_LIST](state, list) {
     state.list = list.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
-      uid: v4(),
+      // uid: v4(),
     }));
+
+    state.json = generateJson(state.list);
   },
   [RECALIBRATE](state) {
     const totalWidth = window.innerWidth;
@@ -239,6 +287,8 @@ const mutations = {
       pixel_width: totalWidth / (100 / item.width),
       // uid: v4(),
     }));
+
+    state.json = generateJson(state.list);
   },
   [READUST_AREAS](state) {
     let remainingLength = 100;
@@ -253,6 +303,19 @@ const mutations = {
       pixel_width: totalWidth / (100 / lengthPart),
       // uid: v4(),
     }));
+
+    state.json = generateJson(state.list);
+  },
+  [SET_CARD_FOLD](state, { areaId, id, status }) {
+    const areaIdx = state.list.findIndex((x) => x.id === areaId);
+    const cardIdx = state.list[areaIdx].cards.findIndex((c) => c.id === id);
+    state.list[areaIdx].cards[cardIdx].fold_status = status;
+    state.json = generateJson(state.list);
+  },
+  [SET_CARDS](state, { areaId, cards }) {
+    const areaIdx = state.list.findIndex((x) => x.id === areaId);
+    state.list[areaIdx].cards = cards;
+    state.json = generateJson(state.list);
   },
 };
 
