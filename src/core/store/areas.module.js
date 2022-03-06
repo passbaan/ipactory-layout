@@ -6,12 +6,15 @@ export const MOVE_AREA = "move_area";
 export const DEACTIVATE_AREA = "deactivate_area";
 export const RESIZING_AREA = "resizing_AREA";
 export const UPDATE_LIST = "update_list";
+export const WINDOW_WAS_RESIZED = "window_was_resized";
+export const READJUST = "READJUST_AREAS";
 // Mutation types
 const AREA_TOGGLE = "area_toggle";
 const REARRANGE_AREA = "rearrange_area";
 const SET_LIST = "set_list";
 const RESIZE_AREA = "resize_area";
-
+const RECALIBRATE = "recalibrate_sizes";
+const READUST_AREAS = "redistribute_areas";
 const state = () => ({
   list: [],
   originalList: [
@@ -96,6 +99,12 @@ const actions = {
   [RESIZING_AREA]({ commit }, { id, sizeDiff }) {
     commit(RESIZE_AREA, { id, sizeDiff });
   },
+  [WINDOW_WAS_RESIZED]({ commit }) {
+    commit(RECALIBRATE);
+  },
+  [READJUST]({ commit }) {
+    commit(READUST_AREAS);
+  },
 };
 const getPercentages = (list) => {
   return list.map((item) => {
@@ -121,21 +130,10 @@ const mutations = {
         (remainingLength / (newList.length + 1)).toFixed(2)
       );
       const remainingPart = 100 - lengthPart;
-      console.log(
-        "file: areas.module.js | line 124 | remainingPart",
-        remainingPart
-      );
+
       newList = newList.map((item) => {
-        console.log(
-          "file: areas.module.js | line 131 | newList=newList.map | item.width",
-          item.width
-        );
         const newPercent = parseFloat(
           ((remainingPart * item.width) / 100).toFixed(2)
-        );
-        console.log(
-          "file: areas.module.js | line 128 | newList=newList.map | newPercent",
-          newPercent
         );
         return {
           ...item,
@@ -162,15 +160,7 @@ const mutations = {
         } else {
           newList.push(item);
         }
-        console.log("file: areas.module.js | line 151 | newList", newList);
       }
-      // newList = list;
-
-      // if (newList.length === 1) {
-      //   newList[0].width = 100;
-      // } else if (newList.length === 2) {
-      //   newList = newList.map((it) => ({ ...it, width: 50 }));
-      // }
     } else {
       state.originalList = originalList.map((item) => ({
         ...item,
@@ -178,6 +168,11 @@ const mutations = {
         uid: v4(),
       }));
       newList = list.filter((x) => x.id !== areaId);
+      const fullWidth = newList.reduce((acc, it) => acc + it.width, 0);
+      newList = newList.map((item) => ({
+        ...item,
+        width: (item.width / fullWidth) * 100,
+      }));
     }
 
     const totalWidth = window.innerWidth;
@@ -208,6 +203,29 @@ const mutations = {
       ...item,
       current_position: idx + 1,
       uid: v4(),
+    }));
+  },
+  [RECALIBRATE](state) {
+    const totalWidth = window.innerWidth;
+    state.list = state.list.map((item, idx) => ({
+      ...item,
+      current_position: idx + 1,
+      pixel_width: totalWidth / (100 / item.width),
+      // uid: v4(),
+    }));
+  },
+  [READUST_AREAS](state) {
+    let remainingLength = 100;
+    const lengthPart = parseFloat(
+      (remainingLength / state.list.length).toFixed(2)
+    );
+    const totalWidth = window.innerWidth;
+    state.list = state.list.map((item, idx) => ({
+      ...item,
+      current_position: idx + 1,
+      width: lengthPart,
+      pixel_width: totalWidth / (100 / lengthPart),
+      // uid: v4(),
     }));
   },
 };

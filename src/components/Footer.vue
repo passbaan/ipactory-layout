@@ -13,18 +13,19 @@
     </template>
 
     <textarea name="config" id="config" cols="30" rows="5"></textarea>
-    <button class="footer__btn">Adjust Structure</button>
+    <button class="footer__btn" @click="readjust">Adjust Structure</button>
   </footer>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { ACTIVATE_AREA } from "@/core/store/areas.module";
+import { ACTIVATE_AREA, READJUST } from "@/core/store/areas.module";
 export default {
   name: "FooterComponent",
   methods: {
     ...mapActions({
       activateArea: ACTIVATE_AREA,
+      readjust: READJUST,
     }),
     addArea(e) {
       const { target } = e;

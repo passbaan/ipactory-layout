@@ -56,18 +56,26 @@ export default {
       let pane = resizer.parentElement;
       const { addEventListener, removeEventListener } = window;
       let { offsetWidth: initialPaneWidth } = pane;
+      const nextPaneId =
+        this.list[this.list.findIndex((x) => x.id === this.element.id) + 1];
+      const nextPane = document.getElementById(`area-${nextPaneId.id}`);
+      const nextPaneSize = nextPane.offsetWidth;
+      let size = 0;
       const resize = (initialSize, offset = 0) => {
         let paneWidth = initialSize + offset;
-        return (pane.style.width = paneWidth + "px");
+        const nextPaneWidth = nextPaneSize - offset;
+        if (nextPaneWidth > 100 && paneWidth >= 100) {
+          nextPane.style.width = nextPaneWidth + "px";
+          size = pane.style.width = paneWidth + "px";
+        }
       };
-      let size = 0;
-      const onMouseMove = function ({ pageX }) {
-        size = resize(initialPaneWidth, pageX - initialPageX);
+
+      const onMouseMove = ({ pageX }) => {
+        resize(initialPaneWidth, pageX - initialPageX);
       };
 
       const onMouseUp = () => {
         const width = parseFloat(size.replace("px", ""));
-        console.log("file: Area.vue | line 76 | onMouseUp | width", width);
         this.resizeArea({
           id: this.element.id,
           sizeDiff: width - initialPaneWidth,

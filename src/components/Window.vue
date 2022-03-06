@@ -18,7 +18,11 @@
 
 <script>
 import { mapActions } from "vuex";
-import { MOVE_AREA, UPDATE_LIST } from "@/core/store/areas.module";
+import {
+  MOVE_AREA,
+  UPDATE_LIST,
+  WINDOW_WAS_RESIZED,
+} from "@/core/store/areas.module";
 import draggable from "vuedraggable";
 import Area from "@/components/Areas/Area.vue";
 export default {
@@ -27,6 +31,9 @@ export default {
   components: {
     Area,
     draggable,
+  },
+  created() {
+    window.onresize = this.windowResized;
   },
   computed: {
     list: {
@@ -41,6 +48,7 @@ export default {
   methods: {
     ...mapActions({
       moveArea: MOVE_AREA,
+      windowResized: WINDOW_WAS_RESIZED,
     }),
   },
 };
