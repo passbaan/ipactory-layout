@@ -28,6 +28,8 @@ main{
   position: relative;
   border-left: 1px solid $colorDark3;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
   // transition: width 0.1s ease-out;
 
   &__handle{
@@ -42,10 +44,7 @@ main{
   }
   &__header{
     display:flex;
-    &--no-events{
-      pointer-events: none;
-     
-    }
+    z-index:2;
   }
   &__content{
     padding: 5px;
@@ -65,7 +64,7 @@ main{
     position: absolute;
     right:0;
     top:0;
-    width: 6px;
+    width: 10px;
     cursor:ew-resize;
   }
   &__image{
@@ -167,6 +166,7 @@ padding:0;
 }
 .no-events{
   pointer-events: none;
+  
   // opacity: 0.1;
   position: relative;
   &::after{
