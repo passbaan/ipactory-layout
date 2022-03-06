@@ -25,14 +25,13 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { DEACTIVATE_AREA } from "@/core/store/areas.module";
+import { DEACTIVATE_AREA, RESIZING_AREA } from "@/core/store/areas.module";
 
 export default {
   name: "AreaComponent",
   data() {
     return {
       area: null,
-      width: this.element.width,
       containerWidth: 0,
     };
   },
@@ -46,31 +45,33 @@ export default {
   },
   mounted() {
     this.area = document.getElementById(`area-${this.element.id}`);
-    this.containerWidth = this.area.clientWidth;
   },
   methods: {
     ...mapActions({
       deActivateArea: DEACTIVATE_AREA,
+      resizeArea: RESIZING_AREA,
     }),
     downMouse(evt) {
       const { target: resizer, pageX: initialPageX } = evt;
       let pane = resizer.parentElement;
-
       const { addEventListener, removeEventListener } = window;
-      let initialPaneWidth = this.containerWidth;
-
+      let { offsetWidth: initialPaneWidth } = pane;
       const resize = (initialSize, offset = 0) => {
         let paneWidth = initialSize + offset;
         return (pane.style.width = paneWidth + "px");
       };
-      // Resize once to get current computed size
       let size = 0;
       const onMouseMove = function ({ pageX }) {
         size = resize(initialPaneWidth, pageX - initialPageX);
       };
 
-      const onMouseUp = function () {
-        this.width = size;
+      const onMouseUp = () => {
+        const width = parseFloat(size.replace("px", ""));
+        console.log("file: Area.vue | line 76 | onMouseUp | width", width);
+        this.resizeArea({
+          id: this.element.id,
+          sizeDiff: width - initialPaneWidth,
+        });
         removeEventListener("mousemove", onMouseMove);
         removeEventListener("mouseup", onMouseUp);
       };

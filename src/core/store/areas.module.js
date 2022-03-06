@@ -4,11 +4,13 @@ import { v4 } from "uuid";
 export const ACTIVATE_AREA = "activate_area";
 export const MOVE_AREA = "move_area";
 export const DEACTIVATE_AREA = "deactivate_area";
+export const RESIZING_AREA = "resizing_AREA";
 export const UPDATE_LIST = "update_list";
 // Mutation types
 const AREA_TOGGLE = "area_toggle";
 const REARRANGE_AREA = "rearrange_area";
 const SET_LIST = "set_list";
+const RESIZE_AREA = "resize_area";
 
 const state = () => ({
   list: [],
@@ -91,6 +93,22 @@ const actions = {
   [UPDATE_LIST]({ commit }, list) {
     commit(SET_LIST, list);
   },
+  [RESIZING_AREA]({ commit }, { id, sizeDiff }) {
+    commit(RESIZE_AREA, { id, sizeDiff });
+  },
+};
+const getPercentages = (list) => {
+  return list.map((item) => {
+    const totalWidth = window.innerWidth;
+    if (item.pixel_width === 0) {
+      item.pixel_width = 100;
+    }
+    item.width = (item.pixel_width / totalWidth) * 100;
+
+    return {
+      ...item,
+    };
+  });
 };
 const mutations = {
   [AREA_TOGGLE](state, { areaId, show }) {
@@ -138,9 +156,16 @@ const mutations = {
     state.list = newList.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
-      pixel_width: (totalWidth / item.width) * 100,
+      pixel_width: totalWidth / (100 / item.width),
       uid: v4(),
     }));
+  },
+  [RESIZE_AREA](state, { id, sizeDiff }) {
+    const { list } = state;
+    const indx = list.findIndex((l) => l.id === id);
+    state.list[indx].pixel_width += sizeDiff;
+    state.list[indx + 1].pixel_width -= sizeDiff;
+    state.list = getPercentages(state.list);
   },
   [REARRANGE_AREA](state) {
     const { list } = state;

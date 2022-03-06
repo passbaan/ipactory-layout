@@ -1,5 +1,6 @@
 <template>
   <div class="window">
+    <!-- <Multipane> -->
     <draggable
       @change="moveArea"
       handle=".area__handle"
@@ -11,6 +12,7 @@
         <Area :key="element.uid" :element="element" />
       </template>
     </draggable>
+    <!-- </Multipane> -->
   </div>
 </template>
 
