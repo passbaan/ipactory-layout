@@ -4,10 +4,7 @@
     :id="`area-${element.id}`"
     :style="`width:${element.pixel_width}px`"
   >
-    <div
-      class="area__header"
-      :class="resizing ? 'area__header--no-events' : ''"
-    >
+    <div class="area__header" :class="resizing ? 'no-events' : ''">
       <div class="area__handle">
         <i class="icon icon__move">&#10021;</i>
       </div>
@@ -17,10 +14,7 @@
         >
       </div>
     </div>
-    <div
-      class="area__content"
-      :class="resizing ? 'area__content--no-events' : ''"
-    >
+    <div class="area__content" :class="resizing ? 'no-events' : ''">
       Area {{ element.id }}
 
       <template v-if="element.hasEditor">
@@ -101,6 +95,10 @@ export default {
       isResizing: RESIZING_TOGGLE,
     }),
     downMouse(evt) {
+      var cols = document.getElementsByClassName("tox-tinymce");
+      for (let i = 0; i < cols.length; i++) {
+        cols[i].style.pointerEvents = "none";
+      }
       const { target: resizer, pageX: initialPageX } = evt;
       this.isResizing(true);
       let pane = resizer.parentElement;
@@ -125,7 +123,13 @@ export default {
       };
 
       const onMouseUp = () => {
-        this.isResizing(false);
+        setTimeout(() => {
+          this.isResizing(false);
+          var cols = document.getElementsByClassName("tox-tinymce");
+          for (let i = 0; i < cols.length; i++) {
+            cols[i].style.pointerEvents = "auto";
+          }
+        }, 500);
         const width = parseFloat(size.replace("px", ""));
         this.resizeArea({
           id: this.element.id,

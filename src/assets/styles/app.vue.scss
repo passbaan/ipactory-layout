@@ -31,7 +31,7 @@ main{
   // transition: width 0.1s ease-out;
 
   &__handle{
-    width:100%;
+    width: 100%;
     background:$colorDark1;
     cursor: pointer;
   }
@@ -44,16 +44,18 @@ main{
     display:flex;
     &--no-events{
       pointer-events: none;
+     
     }
   }
   &__content{
-    
     padding: 5px;
     display: flex;
     flex-direction: column;
+    height: 100%;
     align-items: center;
     &--no-events{
       pointer-events: none;
+      opacity: 0.1;
     }
 
   }
@@ -63,7 +65,7 @@ main{
     position: absolute;
     right:0;
     top:0;
-    width: 4px;
+    width: 6px;
     cursor:ew-resize;
   }
   &__image{
@@ -159,4 +161,21 @@ padding:0;
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+.position-relative{
+  position:relative;
+}
+.no-events{
+  pointer-events: none;
+  // opacity: 0.1;
+  position: relative;
+  &::after{
+    content:'';
+    position: absolute;
+    inset:0;
+    width:100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.2);
+  }
+
 }
