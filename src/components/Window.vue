@@ -5,11 +5,10 @@
       handle=".area__handle"
       v-model="list"
       tag="transition-group"
-      item-key="current_position"
-      :component-data="{ name: 'fade' }"
+      item-key="uid"
     >
       <template #item="{ element }">
-        <Area :id="element.id" :key="element.id" :element="element" />
+        <Area :key="element.uid" :element="element" />
       </template>
     </draggable>
   </div>

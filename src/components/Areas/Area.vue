@@ -1,5 +1,9 @@
 <template>
-  <div class="area" :id="`area-${element.id}`" :style="`width:${width}%;`">
+  <div
+    class="area"
+    :id="`area-${element.id}`"
+    :style="`width:${element.pixel_width}px`"
+  >
     <div class="area__header">
       <div class="area__handle">
         <i class="icon icon__move">&#10021;</i>
@@ -27,9 +31,9 @@ export default {
   name: "AreaComponent",
   data() {
     return {
-      startX: null,
       area: null,
       width: this.element.width,
+      containerWidth: 0,
     };
   },
   props: {
@@ -40,36 +44,39 @@ export default {
       list: ({ areas }) => areas.list,
     }),
   },
-  created() {
-    this.area = document.getElementById("area" + this.element.id);
+  mounted() {
+    this.area = document.getElementById(`area-${this.element.id}`);
+    this.containerWidth = this.area.clientWidth;
   },
   methods: {
     ...mapActions({
       deActivateArea: DEACTIVATE_AREA,
     }),
     downMouse(evt) {
-      this.startX = evt.clientX;
-      document.documentElement.addEventListener(
-        "mousemove",
-        this.moveMouse,
-        false
-      );
-      document.documentElement.addEventListener("mouseup", this.upMouse, false);
-    },
-    moveMouse(evt) {
-      console.log("moving");
-      evt.clientX - this.startX;
-      console.log(
-        "file: Area.vue | line 62 | moveMouse | evt.clientX - this.startX",
-        evt.clientX - this.startX
-      );
-      // .style.width = startWidth + evt.clientX - this.startX + "px";
-    },
-    upMouse(evt) {
-      console.log("file: Area.vue | line 69 | upMouse | evt", evt);
-      console.log("mouseup");
-      document.documentElement.removeEventListener("mousemove", this.moveMouse);
-      document.documentElement.removeEventListener("mouseup", this.upMouse);
+      const { target: resizer, pageX: initialPageX } = evt;
+      let pane = resizer.parentElement;
+
+      const { addEventListener, removeEventListener } = window;
+      let initialPaneWidth = this.containerWidth;
+
+      const resize = (initialSize, offset = 0) => {
+        let paneWidth = initialSize + offset;
+        return (pane.style.width = paneWidth + "px");
+      };
+      // Resize once to get current computed size
+      let size = 0;
+      const onMouseMove = function ({ pageX }) {
+        size = resize(initialPaneWidth, pageX - initialPageX);
+      };
+
+      const onMouseUp = function () {
+        this.width = size;
+        removeEventListener("mousemove", onMouseMove);
+        removeEventListener("mouseup", onMouseUp);
+      };
+
+      addEventListener("mousemove", onMouseMove);
+      addEventListener("mouseup", onMouseUp);
     },
   },
 };

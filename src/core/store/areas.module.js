@@ -1,4 +1,6 @@
+import { v4 } from "uuid";
 // Action types
+
 export const ACTIVATE_AREA = "activate_area";
 export const MOVE_AREA = "move_area";
 export const DEACTIVATE_AREA = "deactivate_area";
@@ -17,7 +19,9 @@ const state = () => ({
       current_position: 1,
       id: 1,
       is_active: false,
-      width: 100,
+      width: 0,
+      pixel_width: 0,
+      uid: v4(),
     },
     {
       name: "Area 2",
@@ -25,7 +29,9 @@ const state = () => ({
       current_position: 3,
       id: 2,
       is_active: false,
-      width: 100,
+      width: 0,
+      pixel_width: 0,
+      uid: v4(),
     },
     {
       name: "Area 3",
@@ -33,7 +39,9 @@ const state = () => ({
       current_position: 3,
       id: 3,
       is_active: false,
-      width: 100,
+      width: 0,
+      pixel_width: 0,
+      uid: v4(),
     },
     {
       name: "Area 4",
@@ -41,7 +49,9 @@ const state = () => ({
       current_position: 4,
       id: 4,
       is_active: false,
-      width: 100,
+      width: 0,
+      pixel_width: 0,
+      uid: v4(),
     },
     {
       name: "Area 5",
@@ -49,7 +59,9 @@ const state = () => ({
       current_position: 5,
       id: 5,
       is_active: false,
-      width: 100,
+      width: 0,
+      pixel_width: 0,
+      uid: v4(),
     },
   ],
 });
@@ -112,13 +124,22 @@ const mutations = {
       state.originalList = originalList.map((item) => ({
         ...item,
         is_active: item.id === areaId ? false : item.is_active,
+        uid: v4(),
       }));
       newList = list.filter((x) => x.id !== areaId);
     }
 
+    const totalWidth = window.innerWidth;
+    if (newList.length === 1) {
+      newList[0].width = 100;
+    } else if (newList.length === 2) {
+      newList = newList.map((it) => ({ ...it, width: 50 }));
+    }
     state.list = newList.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
+      pixel_width: (totalWidth / item.width) * 100,
+      uid: v4(),
     }));
   },
   [REARRANGE_AREA](state) {
@@ -126,12 +147,14 @@ const mutations = {
     state.list = list.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
+      uid: v4(),
     }));
   },
   [SET_LIST](state, list) {
     state.list = list.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
+      uid: v4(),
     }));
   },
 };
