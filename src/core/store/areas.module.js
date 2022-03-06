@@ -27,6 +27,27 @@ const state = () => ({
       width: 0,
       pixel_width: 0,
       uid: v4(),
+      hasEditor: false,
+      cards: [
+        {
+          title: "Card A",
+          content: "Card A",
+          id: v4(),
+          fold_status: false,
+        },
+        {
+          title: "Card B",
+          content: "Card B",
+          id: v4(),
+          fold_status: false,
+        },
+        {
+          title: "Card C",
+          content: "Card C",
+          id: v4(),
+          fold_status: false,
+        },
+      ],
     },
     {
       name: "Area 2",
@@ -37,6 +58,7 @@ const state = () => ({
       width: 0,
       pixel_width: 0,
       uid: v4(),
+      hasEditor: false,
     },
     {
       name: "Area 3",
@@ -47,6 +69,7 @@ const state = () => ({
       width: 0,
       pixel_width: 0,
       uid: v4(),
+      hasEditor: true,
     },
     {
       name: "Area 4",
@@ -57,6 +80,7 @@ const state = () => ({
       width: 0,
       pixel_width: 0,
       uid: v4(),
+      hasEditor: false,
     },
     {
       name: "Area 5",
@@ -67,6 +91,8 @@ const state = () => ({
       width: 0,
       pixel_width: 0,
       uid: v4(),
+      hasEditor: false,
+      image: "https://i.imgur.com/GL7igry.png",
     },
   ],
 });

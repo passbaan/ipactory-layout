@@ -14,7 +14,30 @@
         >
       </div>
     </div>
-    <div class="area__content">Area {{ element.id }}</div>
+    <div class="area__content">
+      Area {{ element.id }}
+
+      <template v-if="element.hasEditor">
+        <hr />
+        <Editor />
+      </template>
+      <template v-if="element.image">
+        <hr />
+        <img class="area__image" :src="element.image" alt="Image" />
+      </template>
+      <template v-if="element.cards && element.cards.length > 0">
+        <draggable
+          v-model="cards"
+          tag="transition-group"
+          item-key="id"
+          handle=".card__draggable"
+        >
+          <template #item="{ element }">
+            <Card :card="element" :key="element.id" />
+          </template>
+        </draggable>
+      </template>
+    </div>
     <div
       class="area__divider"
       v-if="list.findIndex((x) => x.id === element.id) + 1 !== list.length"
@@ -25,15 +48,23 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import draggable from "vuedraggable";
 import { DEACTIVATE_AREA, RESIZING_AREA } from "@/core/store/areas.module";
-
+import Editor from "@/components/Areas/Editor.vue";
+import Card from "@/components/Areas/Card.vue";
 export default {
   name: "AreaComponent",
   data() {
     return {
       area: null,
       containerWidth: 0,
+      cards: [],
     };
+  },
+  components: {
+    Editor,
+    Card,
+    draggable,
   },
   props: {
     element: Object,
@@ -45,6 +76,7 @@ export default {
   },
   mounted() {
     this.area = document.getElementById(`area-${this.element.id}`);
+    this.cards = this.element.cards;
   },
   methods: {
     ...mapActions({
