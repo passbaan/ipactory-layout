@@ -116,28 +116,61 @@ const mutations = {
     let newList = list;
     if (show === true) {
       const item = originalList.find((i) => i.id === areaId);
+      let remainingLength = 100;
+      const lengthPart = parseFloat(
+        (remainingLength / (newList.length + 1)).toFixed(2)
+      );
+      const remainingPart = 100 - lengthPart;
+      console.log(
+        "file: areas.module.js | line 124 | remainingPart",
+        remainingPart
+      );
+      newList = newList.map((item) => {
+        console.log(
+          "file: areas.module.js | line 131 | newList=newList.map | item.width",
+          item.width
+        );
+        const newPercent = parseFloat(
+          ((remainingPart * item.width) / 100).toFixed(2)
+        );
+        console.log(
+          "file: areas.module.js | line 128 | newList=newList.map | newPercent",
+          newPercent
+        );
+        return {
+          ...item,
+          width: newPercent,
+        };
+      });
       item.is_active = true;
-      const { length } = list;
-      if (item.original_position < length) {
-        list.splice(item.original_position - 1, 0, item);
+      item.width = lengthPart;
+      if (item.original_position < newList.length) {
+        newList.splice(item.original_position - 1, 0, item);
       } else {
         let idx = -1;
         for (let i = 0; i < length; i += 1) {
           if (
-            list[i].original_position > item.original_position &&
+            newList[i].original_position > item.original_position &&
             i > 0 &&
-            list[i].original_position < list[i - 1].original_position
+            newList[i].original_position < newList[i - 1].original_position
           ) {
             idx = i;
           }
         }
         if (idx !== -1) {
-          list.splice(idx, 0, item);
+          newList.splice(idx, 0, item);
         } else {
-          list.push(item);
+          newList.push(item);
         }
+        console.log("file: areas.module.js | line 151 | newList", newList);
       }
-      newList = list;
+      // newList = list;
+
+      // if (newList.length === 1) {
+      //   newList[0].width = 100;
+      // } else if (newList.length === 2) {
+      //   newList = newList.map((it) => ({ ...it, width: 50 }));
+      // }
     } else {
       state.originalList = originalList.map((item) => ({
         ...item,
@@ -148,11 +181,6 @@ const mutations = {
     }
 
     const totalWidth = window.innerWidth;
-    if (newList.length === 1) {
-      newList[0].width = 100;
-    } else if (newList.length === 2) {
-      newList = newList.map((it) => ({ ...it, width: 50 }));
-    }
     state.list = newList.map((item, idx) => ({
       ...item,
       current_position: idx + 1,
