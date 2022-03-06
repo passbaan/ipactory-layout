@@ -9,7 +9,8 @@ export const UPDATE_LIST = "update_list";
 export const WINDOW_WAS_RESIZED = "window_was_resized";
 export const READJUST = "READJUST_AREAS";
 export const FOLD_CARD = "fold_card";
-export const UPDATE_CARDS = "update_cards;";
+export const UPDATE_CARDS = "update_cards";
+export const RESIZING_TOGGLE = "resizing_toggle";
 // Mutation types
 const AREA_TOGGLE = "area_toggle";
 const REARRANGE_AREA = "rearrange_area";
@@ -19,7 +20,10 @@ const RECALIBRATE = "recalibrate_sizes";
 const READUST_AREAS = "redistribute_areas";
 const SET_CARD_FOLD = "set_card_fold";
 const SET_CARDS = "set_cards";
+const SET_RESIZING = "set_resizing";
+
 const state = () => ({
+  resizing: false,
   list: [],
   originalList: [
     {
@@ -103,6 +107,9 @@ const state = () => ({
 });
 const getters = {};
 const actions = {
+  [RESIZING_TOGGLE]({ commit }, status) {
+    commit(SET_RESIZING, status);
+  },
   [UPDATE_CARDS]({ commit }, { areaId, cards }) {
     commit(SET_CARDS, { areaId, cards });
   },
@@ -187,6 +194,9 @@ const generateJson = (list) => {
   return JSON.stringify(data);
 };
 const mutations = {
+  [SET_RESIZING](state, status) {
+    state.resizing = status;
+  },
   [AREA_TOGGLE](state, { areaId, show }) {
     const { originalList, list } = state;
     let newList = list;

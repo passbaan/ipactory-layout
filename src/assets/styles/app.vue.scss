@@ -28,7 +28,8 @@ main{
   position: relative;
   border-left: 1px solid $colorDark3;
   overflow: auto;
-  transition: width 0.1s ease-out;
+  // transition: width 0.1s ease-out;
+
   &__handle{
     width:100%;
     background:$colorDark1;
@@ -41,12 +42,20 @@ main{
   }
   &__header{
     display:flex;
+    &--no-events{
+      pointer-events: none;
+    }
   }
   &__content{
+    
     padding: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    &--no-events{
+      pointer-events: none;
+    }
+
   }
   &__divider{
     height: 100%;

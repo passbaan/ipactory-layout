@@ -4,7 +4,10 @@
     :id="`area-${element.id}`"
     :style="`width:${element.pixel_width}px`"
   >
-    <div class="area__header">
+    <div
+      class="area__header"
+      :class="resizing ? 'area__header--no-events' : ''"
+    >
       <div class="area__handle">
         <i class="icon icon__move">&#10021;</i>
       </div>
@@ -14,7 +17,10 @@
         >
       </div>
     </div>
-    <div class="area__content">
+    <div
+      class="area__content"
+      :class="resizing ? 'area__content--no-events' : ''"
+    >
       Area {{ element.id }}
 
       <template v-if="element.hasEditor">
@@ -55,6 +61,7 @@ import {
   RESIZING_AREA,
   FOLD_CARD,
   UPDATE_CARDS,
+  RESIZING_TOGGLE,
 } from "@/core/store/areas.module";
 import Editor from "@/components/Areas/Editor.vue";
 import Card from "@/components/Areas/Card.vue";
@@ -78,6 +85,7 @@ export default {
   computed: {
     ...mapState({
       list: ({ areas }) => areas.list,
+      resizing: ({ areas }) => areas.resizing,
     }),
   },
   mounted() {
@@ -90,9 +98,11 @@ export default {
       resizeArea: RESIZING_AREA,
       foldCard: FOLD_CARD,
       updateCards: UPDATE_CARDS,
+      isResizing: RESIZING_TOGGLE,
     }),
     downMouse(evt) {
       const { target: resizer, pageX: initialPageX } = evt;
+      this.isResizing(true);
       let pane = resizer.parentElement;
       const { addEventListener, removeEventListener } = window;
       let { offsetWidth: initialPaneWidth } = pane;
@@ -115,6 +125,7 @@ export default {
       };
 
       const onMouseUp = () => {
+        this.isResizing(false);
         const width = parseFloat(size.replace("px", ""));
         this.resizeArea({
           id: this.element.id,
